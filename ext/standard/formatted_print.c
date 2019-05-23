@@ -607,7 +607,23 @@ php_formatted_print(zval *z_format, zval *args, int argc)
 										 width, padding, alignment, 1,
 										 hexchars, expprec);
 					break;
+				case 'v':{
+					zend_string *str;
+					if (Z_TYPE_P(tmp) == IS_TRUE)
+						str = zend_string_init("true", strlen("true"), 0);
+					else if (Z_TYPE_P(tmp) == IS_FALSE)
+						str = zend_string_init("false", strlen("false"), 0);
+					else
+						str = zend_print_zval_r_to_str(tmp, 0);
 
+					php_sprintf_appendstring(&result, &outpos,
+											 ZSTR_VAL(str),
+											 width, precision, padding,
+											 alignment,
+											 ZSTR_LEN(str),
+											 0, expprec, 0);
+					break;
+				}
 				case '%':
 					php_sprintf_appendchar(&result, &outpos, '%');
 
